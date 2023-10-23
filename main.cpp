@@ -3,6 +3,7 @@
 #include "Vector.h"
 #include "HashMap.h"
 #include "HashSet.h"
+#include "DSU.h"
 #include <iostream>
 using namespace std;
 
