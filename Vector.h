@@ -84,6 +84,26 @@ public:
         delete[] arr;
     }
 
+    Vector(const Vector<T> &other){
+        this->capacity=other.capacity;
+        this->_size=other._size;
+        this->arr=new T[capacity];
+        for(int i=0;i<_size;i++){
+            this->arr[i]=other.arr[i];
+        }
+    }
+
+    Vector<T> &operator=(const Vector<T> &other){
+        if(this==&other) return *this;
+        this->capacity=other.capacity;
+        this->_size=other._size;
+        this->arr=new T[capacity];
+        for(int i=0;i<_size;i++){
+            this->arr[i]=other.arr[i];
+        }
+        return *this;
+    }
+
     void push_back(T x){
         if(_size==capacity){
             recapacity(capacity*2);

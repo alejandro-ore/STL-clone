@@ -1,6 +1,9 @@
 #ifndef FORWARDLIST_H
 #define FORWARDLIST_H
 
+#include <iostream>
+using namespace std;
+
 template<typename T>
 class ForwardList{
 private:
@@ -53,8 +56,7 @@ public:
             return &current->data;
         }
 
- //       template<typename K>
-   //     friend class HashMap<T,K>;
+        friend class ForwardList<T>;
 	};
 
 	ForwardList(){}
@@ -104,6 +106,17 @@ public:
             delete prev;
         }
     }
+
+    void clear(){
+        node *prev;
+        node *current=root;
+        while(current!=nullptr){
+            prev=current;
+            current=current->next;
+            delete prev;
+        }
+        root=nullptr;
+    }
     
 	void push_front(const T &key){
         node *n=new node(key);
@@ -124,6 +137,50 @@ public:
         return _size;
     }
 
+    void remove(const T &key){
+        if(_size==0) throw runtime_error("what");
+        if(_size==1){
+            pop_front();
+            return;
+        }
+        node *current=root;
+        while(current->next->data!=key){
+            current=current->next;
+        }
+        node *n=current->next;
+        current->next=n->next;
+        delete n;
+        _size--;
+    }
+
+    void remove(iterator it){
+        node *n=it.current;
+        if(n==nullptr) throw runtime_error("what");
+        if(n==root){
+            pop_front();
+            return;
+        }
+        node *current=root;
+        while(current->next!=n){
+            current=current->next;
+        }
+        current->next=n->next;
+        delete n;
+        _size--;
+        return;
+    }
+
+    iterator find(const T &key){
+        node *current=root;
+        while(current!=nullptr){
+            if(current->data==key){
+                return iterator(current);
+            }
+            current=current->next;
+        }
+        return end();
+    }
+
     iterator begin(){
         return iterator(root);
     }
@@ -132,8 +189,6 @@ public:
         return iterator(nullptr);
     }
 
-    //template<typename K>
-    //friend class HashMap<T,K>;
 };
 
 #endif 

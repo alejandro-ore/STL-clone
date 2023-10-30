@@ -12,7 +12,7 @@ private:
 
     int max_collision;
     int capacity;
-    ForwardList<pair<T,K>> *arr;
+    ForwardList<pair<const T,K>> *arr;
     int _size=0;
 
     int hash_f(T x){
@@ -59,32 +59,14 @@ private:
         this->arr=temp->arr;
     }
 
-    void insert(T key,K value){
-        int pos=hash_f(key);
-
-        for(auto it=arr[pos].begin();it!=arr[pos].end();it++){
-            if(key==it->first){
-                return;
-            }
-        }
-        if(arr[pos].size()<max_collision){
-            arr[pos].push_front(make_pair(key,value));
-            _size++;
-        }
-        else{
-            rehash();
-            insert(key,value);
-        }
-    }
-
 public:
 
     struct iterator{
     private:
         int pos=0;
         HashMap<T,K> *this_hash=nullptr;
-        typename ForwardList<pair<T,K>>::iterator current;
-        iterator(HashMap<T,K> *h,typename ForwardList<pair<T,K>>::iterator n,int pos,bool end):pos(pos),this_hash(h),current(n){
+        typename ForwardList<pair<const T,K>>::iterator current;
+        iterator(HashMap<T,K> *h,typename ForwardList<pair<const T,K>>::iterator n,int pos,bool end):pos(pos),this_hash(h),current(n){
             if(!end&&current.end()){
                 next();
             }
@@ -103,7 +85,8 @@ public:
             this->this_hash=other.this_hash;
             this->pos=other.pos;
         }
-        iterator operator=(const iterator &other){
+        iterator &operator=(const iterator &other){
+            if(this==&other) return *this;
             this->current=other.current;
             this->pos=other.pos;
             this->this_hash=other.this_hash;
@@ -127,24 +110,24 @@ public:
         bool operator!=(iterator other){
             return this->current!=other.current;
         }
-        pair<T,K> &operator*(){
+        pair<const T,K> &operator*(){
             return *current;
         }
-        pair<T,K> *operator->(){
+        pair<const T,K> *operator->(){
             return &(*current);
         }
         friend class HashMap<T,K>;
     };
 
 	HashMap(int cap=4,int coll=3):capacity(cap),max_collision(coll){
-        arr=new ForwardList<pair<T,K>>[capacity];
+        arr=new ForwardList<pair<const T,K>>[capacity];
     }
 
     HashMap(const HashMap<T,K> &other){
         this->capacity=other.capacity;
         this->max_collision=other.max_collision;
         this->_size=other._size;
-        this->arr=new ForwardList<pair<T,K>>[this->capacity];
+        this->arr=new ForwardList<pair<const T,K>>[this->capacity];
         for(int i=0;i<capacity;i++){
             this->arr[i]=other.arr[i];
         }
@@ -156,7 +139,7 @@ public:
         this->max_collision=other.max_collision;
         this->_size=other._size;
         delete[] this->arr;
-        this->arr=new ForwardList<pair<T,K>>[capacity];
+        this->arr=new ForwardList<pair<const T,K>>[capacity];
         for(int i=0;i<capacity;i++){
             this->arr[i]=other.arr[i];
         }
@@ -165,6 +148,24 @@ public:
 
     ~HashMap(){
         delete[] arr;
+    }
+
+    void insert(const T &key,const K &value){
+        int pos=hash_f(key);
+
+        for(auto it=arr[pos].begin();it!=arr[pos].end();it++){
+            if(key==it->first){
+                return;
+            }
+        }
+        if(arr[pos].size()<max_collision){
+            arr[pos].push_front(make_pair(key,value));
+            _size++;
+        }
+        else{
+            rehash();
+            insert(key,value);
+        }
     }
 
     K &operator[](T key){
@@ -178,7 +179,30 @@ public:
         return (*this)[key];
     }
 
-    iterator find(T key){
+    void remove(const T &key){
+        int pos=hash_f(key);
+        for(auto it=arr[pos].begin();it!=arr[pos].end();it++){
+            if(key==it->first){
+                arr[pos].remove(it);
+                _size--;
+                return;
+            }
+        }
+    }
+
+    void remove(iterator it){
+        arr[it.pos].remove(it.current);
+        _size--;
+    }
+
+    void clear(){
+        delete[] arr;
+        _size=0;
+        capacity=4;
+        arr=new ForwardList<pair<const T,K>>[capacity];
+    }
+
+    iterator find(const T &key){
         int pos=hash_f(key);
         for(auto it=arr[pos].begin();it!=arr[pos].end();it++){
             if(key==it->first){

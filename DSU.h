@@ -25,6 +25,20 @@ public:
         _sets=data.size();
     }
 
+    DSU(const DSU<T> &other){
+        this->parent=other.parent;
+        this->rank=other.rank;
+        this->_sets=other._sets;
+    }
+
+    DSU<T> &operator=(const DSU<T> &other){
+        if(this==&other) return *this;
+        this->parent=other.parent;
+        this->rank=other.rank;
+        this->_sets=other._sets;
+        return *this;
+    }
+
     void make_set(const T &x){
         if(parent.find()!=parent.end()){
             parent[x]=x;

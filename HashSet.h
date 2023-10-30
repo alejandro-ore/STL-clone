@@ -12,7 +12,7 @@ private:
 
     int max_collision;
     int capacity;
-    ForwardList<T> *arr;
+    ForwardList<const T> *arr;
     int _size=0;
 
     int hash_f(T x){
@@ -65,8 +65,8 @@ public:
     private:
         int pos=0;
         HashSet<T> *this_hash=nullptr;
-        typename ForwardList<T>::iterator current;
-        iterator(HashSet<T> *h,typename ForwardList<T>::iterator n,int pos,bool end):pos(pos),this_hash(h),current(n){
+        typename ForwardList<const T>::iterator current;
+        iterator(HashSet<T> *h,typename ForwardList<const T>::iterator n,int pos,bool end):pos(pos),this_hash(h),current(n){
             if(!end&&current.end()){
                 next();
             }
@@ -109,24 +109,24 @@ public:
         bool operator!=(iterator other){
             return this->current!=other.current;
         }
-        T &operator*(){
+        const T &operator*(){
             return *current;
         }
-        T *operator->(){
+        const T *operator->(){
             return &(*current);
         }
         friend class HashSet<T>;
     };
 
 	HashSet(int cap=4,int coll=3):capacity(cap),max_collision(coll){
-        arr=new ForwardList<T>[capacity];
+        arr=new ForwardList<const T>[capacity];
     }
 
     HashSet(const HashSet<T> &other){
         this->capacity=other.capacity;
         this->max_collision=other.max_collision;
         this->_size=other._size;
-        this->arr=new ForwardList<T>[this->capacity];
+        this->arr=new ForwardList<const T>[this->capacity];
         for(int i=0;i<capacity;i++){
             this->arr[i]=other.arr[i];
         }
@@ -138,7 +138,7 @@ public:
         this->max_collision=other.max_collision;
         this->_size=other._size;
         delete[] this->arr;
-        this->arr=new ForwardList<T>[capacity];
+        this->arr=new ForwardList<const T>[capacity];
         for(int i=0;i<capacity;i++){
             this->arr[i]=other.arr[i];
         }
@@ -149,7 +149,7 @@ public:
         delete[] arr;
     }
 
-    void insert(T key){
+    void insert(const T &key){
         int pos=hash_f(key);
 
         for(auto it=arr[pos].begin();it!=arr[pos].end();it++){
@@ -165,6 +165,22 @@ public:
             rehash();
             insert(key);
         }
+    }
+
+    void remove(const T &key){
+        int pos=hash_f(key);
+        for(auto it=arr[pos].begin();it!=arr[pos].end();it++){
+            if(key==*it){
+                arr[pos].remove(it);
+                _size--;
+                return;
+            }
+        }
+    }
+
+    void remove(iterator it){
+        arr[it.pos].remove(it.current);
+        _size--;
     }
 
     iterator find(T key){
