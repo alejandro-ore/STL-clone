@@ -27,6 +27,27 @@
         "utility": "cpp",
         "vector": "cpp",
         "system_error": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "deque": "cpp",
+        "bit": "cpp",
+        "cctype": "cpp",
+        "clocale": "cpp",
+        "cmath": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "cstdarg": "cpp",
+        "cstddef": "cpp",
+        "cstdint": "cpp",
+        "cstdio": "cpp",
+        "cstdlib": "cpp",
+        "cstring": "cpp",
+        "cwctype": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp",
+        "iostream": "cpp",
+        "numbers": "cpp",
+        "cinttypes": "cpp",
+        "typeinfo": "cpp",
+        "forward_list": "cpp"
     }
 }

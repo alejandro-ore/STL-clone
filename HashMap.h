@@ -6,7 +6,7 @@
 
 using namespace std;
 
-template<typename T,typename K,typename hash_func=std::hash<T>>
+template<typename T,typename K>
 class HashMap{
 private:
 
@@ -15,9 +15,18 @@ private:
     ForwardList<pair<const T,K>> *arr;
     int _size=0;
 
-    int hash_f(const T &x){
-        hash_func f;
+    template<typename t>
+    int hash_f(const t &x){
+        hash<t> f;
         int result=f(x);
+        return abs(result)%capacity;
+    }
+
+    template<typename t1,typename t2>
+    int hash_f(const pair<t1,t2> &p){
+        int h1 = std::hash<int>{}(p.first);
+        int h2 = std::hash<int>{}(p.second);
+        int result=h1^h2;
         return abs(result)%capacity;
     }
 
@@ -50,7 +59,7 @@ private:
     void rehash(){
         int prev_cap=capacity;
         update_capacity();
-        HashMap<T,K,hash_func> *temp=new HashMap<T,K,hash_func>(capacity,max_collision);
+        HashMap<T,K> *temp=new HashMap<T,K>(capacity,max_collision);
         for(int i=0;i<prev_cap;i++){
             for(auto it=arr[i].begin();it!=arr[i].end();it++){
                 temp->insert(it->first,it->second);
@@ -65,9 +74,9 @@ public:
     struct iterator{
     private:
         int pos=0;
-        HashMap<T,K,hash_func> *this_hash=nullptr;
+        HashMap<T,K> *this_hash=nullptr;
         typename ForwardList<pair<const T,K>>::iterator current;
-        iterator(HashMap<T,K,hash_func> *h,typename ForwardList<pair<const T,K>>::iterator n,int pos,bool end)
+        iterator(HashMap<T,K> *h,typename ForwardList<pair<const T,K>>::iterator n,int pos,bool end)
         :pos(pos),this_hash(h),current(n){
             if(!end&&current.end()){
                 next();
@@ -118,7 +127,7 @@ public:
         pair<const T,K> *operator->(){
             return &(*current);
         }
-        friend class HashMap<T,K,hash_func>;
+        friend class HashMap<T,K>;
     };
 
 	HashMap(int cap=4,int coll=3):capacity(cap),max_collision(coll){

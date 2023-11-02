@@ -17,24 +17,23 @@ void print(container<T> &a){
     cout<<"\n";
 }
 
-#include <functional>
-
-struct pair_hash
-{
-    int operator () (const std::pair<int, int>& p) const {
-        int h1 = std::hash<int>{}(p.first);
-        int h2 = std::hash<int>{}(p.second);
-
-        return static_cast<int>(h1^h2);
-    }
+template<typename T>
+struct temp{
+    temp(){}
 };
 
+#include <bits/stdc++.h>
+
 int main(){
-    HashSet<pair<int,int>,pair_hash> a;
-    a.insert({1,2});
-    a.insert({2,1});
-    a.insert({2,2});
-    for(auto it=a.begin();it!=a.end();it++){
-        cout<<"("<<it->first<<","<<it->second<<")\n";
+    HashMap<int,Queue<int>> a;
+    a.insert(1,Queue<int>());
+    a[1].push(1);
+    a[1].push(2);
+    a[1].push(3);
+    a[1].push(4);
+    a[1].push(5);
+    while(!a[1].empty()){
+        cout<<a[1].front()<<" ";
+        a[1].pop();
     }
 }

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-template<typename T,typename hash_func=std::hash<T>>
+template<typename T>
 class HashSet{
 private:
 
@@ -15,9 +15,18 @@ private:
     ForwardList<const T> *arr;
     int _size=0;
 
-    int hash_f(const T &x){
-        hash_func f;
+    template<typename t>
+    int hash_f(const t &x){
+        hash<t> f;
         int result=f(x);
+        return abs(result)%capacity;
+    }
+
+    template<typename t1,typename t2>
+    int hash_f(const pair<t1,t2> &p){
+        int h1 = std::hash<int>{}(p.first);
+        int h2 = std::hash<int>{}(p.second);
+        int result=h1^h2;
         return abs(result)%capacity;
     }
 
@@ -50,7 +59,7 @@ private:
     void rehash(){
         int prev_cap=capacity;
         update_capacity();
-        HashSet<T,hash_func> *temp=new HashSet<T,hash_func>(capacity,max_collision);
+        HashSet<T> *temp=new HashSet<T>(capacity,max_collision);
         for(int i=0;i<prev_cap;i++){
             for(auto it=arr[i].begin();it!=arr[i].end();it++){
                 temp->insert(*it);
@@ -65,9 +74,9 @@ public:
     struct iterator{
     private:
         int pos=0;
-        HashSet<T,hash_func> *this_hash=nullptr;
+        HashSet<T> *this_hash=nullptr;
         typename ForwardList<const T>::iterator current;
-        iterator(HashSet<T,hash_func> *h,typename ForwardList<const T>::iterator n,int pos,bool end)
+        iterator(HashSet<T> *h,typename ForwardList<const T>::iterator n,int pos,bool end)
         :pos(pos),this_hash(h),current(n){
             if(!end&&current.end()){
                 next();
@@ -117,7 +126,7 @@ public:
         const T *operator->(){
             return &(*current);
         }
-        friend class HashSet<T,hash_func>;
+        friend class HashSet<T>;
     };
 
 	HashSet(int cap=4,int coll=3):capacity(cap),max_collision(coll){
