@@ -17,10 +17,24 @@ void print(container<T> &a){
     cout<<"\n";
 }
 
+#include <functional>
+
+struct pair_hash
+{
+    int operator () (const std::pair<int, int>& p) const {
+        int h1 = std::hash<int>{}(p.first);
+        int h2 = std::hash<int>{}(p.second);
+
+        return static_cast<int>(h1^h2);
+    }
+};
+
 int main(){
-    Vector<int> v;
-    for(int i=1;i<=10;i++) v.push_back(i);
-    DSU<int> a(v);
-    DSU<int> b;
-    b=a;
+    HashSet<pair<int,int>,pair_hash> a;
+    a.insert({1,2});
+    a.insert({2,1});
+    a.insert({2,2});
+    for(auto it=a.begin();it!=a.end();it++){
+        cout<<"("<<it->first<<","<<it->second<<")\n";
+    }
 }

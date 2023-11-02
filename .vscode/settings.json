@@ -24,6 +24,9 @@
         "new": "cpp",
         "stdexcept": "cpp",
         "type_traits": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "vector": "cpp",
+        "system_error": "cpp",
+        "numeric": "cpp"
     }
 }
